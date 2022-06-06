@@ -1,30 +1,12 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const { authenticate } = require("../helpers/userHelpers");
+const { authenticate, getEmail, addUser, getAllUsers } = require("../helpers/userHelpers");
 
 module.exports = db => {
 	// all routes will go here
-	const getEmail = function (email) {
-		const queryStringEmail = `SELECT *
-    FROM users
-    WHERE email = $1
-    `;
-		const values = [email];
-		return db.query(queryStringEmail, values).then(result => {
-			return result.rows[0];
-		});
-	};
-
-	const addUser = function (name, email, password) {
-		const queryString = `INSERT INTO users (name, email, password)
-  VALUES(
-  $1, $2, $3) RETURNING *`;
-		return db.query(queryString, [name, email, password]);
-	};
-
 	router.get("/", (req, res) => {
-		const command = "SELECT * FROM users";
-		db.query(command).then(data => {
+		getAllUsers()
+		.then(data => {
 			res.json(data.rows);
 		});
 	});
